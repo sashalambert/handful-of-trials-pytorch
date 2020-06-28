@@ -6,7 +6,8 @@ import time
 
 import numpy as np
 from dotmap import DotMap
-from gym.monitoring import VideoRecorder
+#FIXME
+# from gym.monitoring import VideoRecorder
 
 
 class Agent:
@@ -42,16 +43,18 @@ class Agent:
         Returns: (dict) A dictionary containing data from the rollout.
             The keys of the dictionary are 'obs', 'ac', and 'reward_sum'.
         """
-        video_record = record_fname is not None
-        recorder = None if not video_record else VideoRecorder(self.env, record_fname)
+        #FIXME
+        # video_record = record_fname is not None
+        # recorder = None if not video_record else VideoRecorder(self.env, record_fname)
 
         times, rewards = [], []
         O, A, reward_sum, done = [self.env.reset()], [], 0, False
 
         policy.reset()
         for t in range(horizon):
-            if video_record:
-                recorder.capture_frame()
+            #FIXME
+            # if video_record:
+            #     recorder.capture_frame()
             start = time.time()
             A.append(policy.act(O[t], t))
             times.append(time.time() - start)
@@ -64,9 +67,10 @@ class Agent:
             if done:
                 break
 
-        if video_record:
-            recorder.capture_frame()
-            recorder.close()
+        #FIXME
+        # if video_record:
+        #     recorder.capture_frame()
+        #     recorder.close()
 
         print("Average action selection time: ", np.mean(times))
         print("Rollout length: ", len(A))

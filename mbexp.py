@@ -51,6 +51,7 @@ def main(env, ctrl_type, ctrl_args, overrides, logdir):
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
+
     parser.add_argument('-env', type=str, required=True,
                         help='Environment name: select from [cartpole, reacher, pusher, halfcheetah]')
     parser.add_argument('-ca', '--ctrl_arg', action='append', nargs=2, default=[],
