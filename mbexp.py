@@ -9,9 +9,8 @@ import pprint
 from dotmap import DotMap
 
 from MBExperiment import MBExperiment
-from MPC import MPC
+from mpc.MPC import MPC
 from config import create_config
-import env # We run this so that the env is registered
 
 import torch
 import numpy as np
@@ -26,9 +25,7 @@ def set_global_seeds(seed):
 
     np.random.seed(seed)
     random.seed(seed)
-
     tf.set_random_seed(seed)
-
 
 def main(env, ctrl_type, ctrl_args, overrides, logdir):
     set_global_seeds(0)
@@ -52,8 +49,11 @@ def main(env, ctrl_type, ctrl_args, overrides, logdir):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
 
-    parser.add_argument('-env', type=str, required=True,
+    # parser.add_argument('-env', type=str, required=True,
+    #                     help='Environment name: select from [cartpole, reacher, pusher, halfcheetah]')
+    parser.add_argument('-env', type=str,
                         help='Environment name: select from [cartpole, reacher, pusher, halfcheetah]')
+
     parser.add_argument('-ca', '--ctrl_arg', action='append', nargs=2, default=[],
                         help='Controller arguments, see https://github.com/kchua/handful-of-trials#controller-arguments')
     parser.add_argument('-o', '--override', action='append', nargs=2, default=[],
@@ -62,4 +62,6 @@ if __name__ == "__main__":
                         help='Directory to which results will be logged (default: ./log)')
     args = parser.parse_args()
 
+    ## DEBUG
+    args.env = 'halfcheetah'
     main(args.env, "MPC", args.ctrl_arg, args.override, args.logdir)

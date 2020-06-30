@@ -27,20 +27,19 @@ class PtModel(nn.Module):
         self.out_features = out_features
 
         self.lin0_w, self.lin0_b = get_affine_params(ensemble_size, in_features, 200)
-
         self.lin1_w, self.lin1_b = get_affine_params(ensemble_size, 200, 200)
-
         self.lin2_w, self.lin2_b = get_affine_params(ensemble_size, 200, 200)
-
         self.lin3_w, self.lin3_b = get_affine_params(ensemble_size, 200, 200)
-
         self.lin4_w, self.lin4_b = get_affine_params(ensemble_size, 200, out_features)
+        self.inputs_mu = nn.Parameter(torch.zeros(in_features),
+                                      requires_grad=False)
+        self.inputs_sigma = nn.Parameter(torch.zeros(in_features),
+                                         requires_grad=False)
 
-        self.inputs_mu = nn.Parameter(torch.zeros(in_features), requires_grad=False)
-        self.inputs_sigma = nn.Parameter(torch.zeros(in_features), requires_grad=False)
-
-        self.max_logvar = nn.Parameter(torch.ones(1, out_features // 2, dtype=torch.float32) / 2.0)
-        self.min_logvar = nn.Parameter(- torch.ones(1, out_features // 2, dtype=torch.float32) * 10.0)
+        self.max_logvar = nn.Parameter(torch.ones(1, out_features // 2,
+                                                  dtype=torch.float32) / 2.0)
+        self.min_logvar = nn.Parameter(- torch.ones(1, out_features // 2,
+                                                    dtype=torch.float32) * 10.0)
 
     def compute_decays(self):
 
@@ -68,16 +67,12 @@ class PtModel(nn.Module):
 
         inputs = inputs.matmul(self.lin0_w) + self.lin0_b
         inputs = swish(inputs)
-
         inputs = inputs.matmul(self.lin1_w) + self.lin1_b
         inputs = swish(inputs)
-
         inputs = inputs.matmul(self.lin2_w) + self.lin2_b
         inputs = swish(inputs)
-
         inputs = inputs.matmul(self.lin3_w) + self.lin3_b
         inputs = swish(inputs)
-
         inputs = inputs.matmul(self.lin4_w) + self.lin4_b
 
         mean = inputs[:, :, :self.out_features // 2]
@@ -90,7 +85,6 @@ class PtModel(nn.Module):
             return mean, logvar
 
         return mean, torch.exp(logvar)
-
 
 class HalfCheetahConfigModule:
     ENV_NAME = "MBRLHalfCheetah-v0"
@@ -158,17 +152,12 @@ class HalfCheetahConfigModule:
         return 0.1 * (acs ** 2).sum(dim=1)
 
     def nn_constructor(self, model_init_cfg):
-
         ensemble_size = get_required_argument(model_init_cfg, "num_nets", "Must provide ensemble size")
-
         load_model = model_init_cfg.get("load_model", False)
-
         assert load_model is False, 'Has yet to support loading model'
-
         model = PtModel(ensemble_size,
                         self.MODEL_IN, self.MODEL_OUT * 2).to(TORCH_DEVICE)
         # * 2 because we output both the mean and the variance
-
         model.optim = torch.optim.Adam(model.parameters(), lr=0.001)
 
         return model

@@ -13,7 +13,8 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
     def __init__(self):
         self.prev_qpos = None
         dir_path = os.path.dirname(os.path.realpath(__file__))
-        mujoco_env.MujocoEnv.__init__(self, '%s/assets/half_cheetah.xml' % dir_path, 5)
+        mujoco_env.MujocoEnv.__init__(
+            self, '%s/assets/half_cheetah.xml' % dir_path, 5)
         utils.EzPickle.__init__(self)
 
     def step(self, action):
@@ -36,12 +37,23 @@ class HalfCheetahEnv(mujoco_env.MujocoEnv, utils.EzPickle):
         ])
 
     def reset_model(self):
-        qpos = self.init_qpos + np.random.normal(loc=0, scale=0.001, size=self.model.nq)
-        qvel = self.init_qvel + np.random.normal(loc=0, scale=0.001, size=self.model.nv)
+        qpos = self.init_qpos + np.random.normal(
+            loc=0,
+            scale=0.001,
+            size=self.model.nq,
+        )
+        qvel = self.init_qvel + np.random.normal(
+            loc=0,
+            scale=0.001,
+            size=self.model.nv,
+        )
         self.set_state(qpos, qvel)
-        self.prev_qpos = np.copy(self.sim.data.qpos.flat)
+        self.prev_qpos = np.copy(
+            self.sim.data.qpos.flat,
+        )
         return self._get_obs()
 
     def viewer_setup(self):
         self.viewer.cam.distance = self.model.stat.extent * 0.25
         self.viewer.cam.elevation = -55
+

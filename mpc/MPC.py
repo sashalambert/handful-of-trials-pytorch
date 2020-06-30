@@ -8,7 +8,7 @@ import numpy as np
 from scipy.io import savemat
 
 from DotmapUtils import get_required_argument
-from optimizers import CEMOptimizer
+from mpc.optimizers.optimizers import CEMOptimizer
 
 from tqdm import trange
 
@@ -125,10 +125,14 @@ class MPC(Controller):
         self.npart = get_required_argument(params.prop_cfg, "npart", "Must provide number of particles.")
         self.ign_var = params.prop_cfg.get("ign_var", False) or self.prop_mode == "E"
 
-        self.obs_preproc = params.prop_cfg.get("obs_preproc", lambda obs: obs)
-        self.obs_postproc = params.prop_cfg.get("obs_postproc", lambda obs, model_out: model_out)
-        self.obs_postproc2 = params.prop_cfg.get("obs_postproc2", lambda next_obs: next_obs)
-        self.targ_proc = params.prop_cfg.get("targ_proc", lambda obs, next_obs: next_obs)
+        self.obs_preproc = params.prop_cfg.get("obs_preproc",
+                                               lambda obs: obs)
+        self.obs_postproc = params.prop_cfg.get("obs_postproc",
+                                                lambda obs, model_out: model_out)
+        self.obs_postproc2 = params.prop_cfg.get("obs_postproc2",
+                                                 lambda next_obs: next_obs)
+        self.targ_proc = params.prop_cfg.get("targ_proc",
+                                             lambda obs, next_obs: next_obs)
 
         self.opt_mode = get_required_argument(params.opt_cfg, "mode", "Must provide optimization method.")
         self.plan_hor = get_required_argument(params.opt_cfg, "plan_hor", "Must provide planning horizon.")
